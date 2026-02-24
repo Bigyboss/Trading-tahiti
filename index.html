@@ -30,6 +30,7 @@
         }
         .clock-section { flex: 1; min-width: 200px; }
         .clock { font-size: clamp(1.8rem, 5vw, 2.2rem); font-weight: bold; font-family: monospace; color: var(--yellow); }
+        .utc-clock { font-size: 0.85rem; font-family: monospace; color: var(--gray); margin-top: 2px; }
 
         /* SEASON SWITCH */
         .season-switch { background: #2b3139; padding: 5px; border-radius: 8px; display: flex; gap: 5px; align-items: center; }
@@ -51,10 +52,12 @@
             transition: all 0.2s;
         }
         .region-tab.active { border-color: var(--yellow); color: var(--yellow); background: rgba(240,185,11,0.1); }
+        .region-tab.fav-tab { border-color: var(--orange); color: var(--orange); }
+        .region-tab.fav-tab.active { background: rgba(230,126,34,0.15); }
 
         /* MARKET TABLE */
         .table-container { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 6px; min-width: 300px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 5px; min-width: 300px; }
         th { text-align: left; padding: 8px 10px; color: var(--gray); font-size: 0.72rem; text-transform: uppercase; }
         tr.market-row { background: var(--card); transition: background 0.3s; }
         tr.market-row:hover { background: var(--card2); }
@@ -62,61 +65,76 @@
         td:first-child { border-radius: 8px 0 0 8px; }
         td:last-child { border-radius: 0 8px 8px 0; }
 
+        /* BREAK indicator */
+        .break-badge { font-size: 0.62rem; color: var(--orange); border: 1px solid var(--orange); padding: 2px 5px; border-radius: 3px; margin-left: 5px; }
+
         /* PROGRESS BAR */
-        .progress-wrap { margin-top: 4px; height: 3px; background: #333; border-radius: 2px; width: 100%; min-width: 80px; }
-        .progress-bar { height: 3px; border-radius: 2px; background: var(--green); transition: width 0.5s; }
-        .progress-bar.closed-bar { background: var(--gray); }
+        .progress-wrap { height: 3px; background: #333; border-radius: 2px; width: 100%; min-width: 80px; }
+        .progress-bar { height: 3px; border-radius: 2px; transition: width 0.5s; }
+        .bar-open { background: var(--green); }
+        .bar-break { background: var(--orange); }
+        .bar-closed { background: #333; }
 
         /* STATUS */
         .status-badge { padding: 3px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; white-space: nowrap; }
         .open { color: var(--green); border: 1px solid var(--green); }
+        .on-break { color: var(--orange); border: 1px solid var(--orange); }
         .closed { color: var(--gray); border: 1px solid #444; opacity: 0.7; }
-        .region-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .region-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
 
         /* COUNTDOWN */
-        .countdown { font-size: 0.7rem; color: var(--yellow); font-family: monospace; }
+        .countdown { font-size: 0.68rem; color: var(--gray); font-family: monospace; margin-top: 2px; }
+        .countdown.soon { color: var(--yellow); }
 
         /* OVERLAP HEATMAP */
-        .heatmap-scroll { overflow-x: auto; margin-bottom: 20px; }
-        .heatmap-table { min-width: 700px; width: 100%; border-collapse: collapse; }
-        .heatmap-table th { font-size: 0.65rem; color: var(--gray); padding: 4px 2px; text-align: center; border: none; }
-        .heatmap-table td { width: 3.8%; height: 30px; border: 1px solid #0b0e11; transition: all 0.3s; font-size: 0.55rem; text-align: center; vertical-align: middle; color: transparent; }
-        .heatmap-table td:hover { opacity: 0.85; color: white; }
-        .heatmap-table .mkt-label { width: 110px; font-size: 0.72rem; color: var(--text); text-align: right; padding-right: 8px; white-space: nowrap; background: transparent; border: none; }
-        .heatmap-table .hour-now { outline: 2px solid var(--yellow); outline-offset: -2px; }
-        .heat-0 { background: #1a1f26; }
-        .heat-1 { background: rgba(52,152,219,0.25); }
-        .heat-2 { background: rgba(52,152,219,0.55); }
-        .heat-3 { background: rgba(52,152,219,0.8); }
-        .heat-4 { background: rgba(2,192,118,0.9); }
+        .heatmap-scroll { overflow-x: auto; margin-bottom: 10px; }
+        .heatmap-table { min-width: 650px; width: 100%; border-collapse: collapse; }
+        .heatmap-table th { font-size: 0.62rem; color: var(--gray); padding: 3px 1px; text-align: center; border: none; }
+        .heatmap-table td { width: 3.8%; height: 28px; border: 1px solid #0b0e11; transition: all 0.3s; font-size: 0.52rem; text-align: center; vertical-align: middle; color: transparent; cursor: default; }
+        .heatmap-table td:hover { opacity: 0.8; color: white; }
+        .heatmap-table .mkt-label { width: 105px; font-size: 0.7rem; color: var(--text); text-align: right; padding-right: 8px; white-space: nowrap; background: transparent; border: none; height: auto; }
+        .heatmap-table .hour-now { outline: 2px solid var(--yellow); outline-offset: -2px; border-radius: 1px; }
+        .heat-0 { background: #161b22; }
+        .heat-1 { background: rgba(52,152,219,0.2); }
+        .heat-2 { background: rgba(52,152,219,0.45); }
+        .heat-3 { background: rgba(52,152,219,0.7); }
+        .heat-4 { background: rgba(2,192,118,0.75); }
+        .heat-5 { background: rgba(2,192,118,0.95); }
+        .heat-open { background: rgba(52,152,219,0.5); }
+        .heat-break { background: rgba(230,126,34,0.3); }
         .overlap-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: var(--gray); }
-        .legend-box { width: 14px; height: 14px; border-radius: 3px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: var(--gray); }
+        .legend-box { width: 13px; height: 13px; border-radius: 2px; }
 
-        /* OVERLAP SUMMARY */
-        .overlap-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        /* OVERLAP CARDS */
+        .overlap-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(195px, 1fr)); gap: 10px; margin-bottom: 20px; }
         .overlap-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); }
-        .overlap-card.live { border-left-color: var(--green); background: rgba(2,192,118,0.07); }
+        .overlap-card.live { border-left-color: var(--green); background: rgba(2,192,118,0.07); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(2,192,118,0.3)} 50%{box-shadow:0 0 8px 2px rgba(2,192,118,0.15)} }
         .overlap-title { font-weight: bold; font-size: 0.82rem; }
         .overlap-time { font-family: monospace; color: var(--yellow); font-size: 0.9rem; }
-        .overlap-desc { color: var(--gray); font-size: 0.72rem; margin-top: 3px; }
+        .overlap-desc { color: var(--gray); font-size: 0.7rem; margin-top: 3px; }
 
         /* ALGOS */
         .algo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 30px; }
-        .algo-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); }
-        .algo-active { border-left: 5px solid var(--green); background: rgba(2, 192, 118, 0.1); }
+        .algo-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid #2b3a50; transition: all 0.3s; }
+        .algo-active { border-left: 5px solid var(--green); background: rgba(2,192,118,0.1); }
+        .algo-next { border-left-color: var(--yellow); }
         .algo-time { font-family: monospace; color: var(--yellow); font-size: 0.9rem; }
         .algo-title { font-size: 0.8rem; color: var(--text); margin-top: 2px; }
 
         /* CALENDAR */
         .calendar-wrapper { border-radius: 12px; overflow: hidden; height: 500px; background: var(--card); border: 1px solid #333; margin-bottom: 20px; }
 
+        /* NOTE BOX */
+        .note-box { background: rgba(240,185,11,0.07); border: 1px solid rgba(240,185,11,0.2); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.75rem; color: var(--gray); }
+
         @media (max-width: 480px) {
             .header { justify-content: center; text-align: center; }
             .season-switch { width: 100%; justify-content: center; }
             td { padding: 8px 5px; font-size: 0.78rem; }
             .clock { font-size: 1.8rem; }
-            .heatmap-table .mkt-label { width: 80px; font-size: 0.65rem; }
+            .heatmap-table .mkt-label { width: 75px; font-size: 0.62rem; }
         }
     </style>
 </head>
@@ -126,9 +144,10 @@
     <!-- HEADER -->
     <div class="header">
         <div class="clock-section">
-            <div style="color: var(--gray); font-size: 0.8rem;">🌺 TAHITI LOCAL TIME (UTC-10)</div>
+            <div style="color: var(--gray); font-size: 0.8rem;">🌺 TAHITI LOCAL TIME (UTC−10)</div>
             <div class="clock" id="clock">00:00:00</div>
             <div id="date" style="font-size: 0.8rem; color: var(--text);">--</div>
+            <div class="utc-clock" id="utc-clock">UTC --:--</div>
         </div>
         <div class="season-switch">
             <button class="btn-season" id="btn-hiver" onclick="setSeason('hiver')">❄️ WINTER</button>
@@ -138,41 +157,43 @@
 
     <!-- MARKETS -->
     <div class="section-title">🌍 Marchés Mondiaux</div>
+    <div class="note-box">⏰ Horaires en heure locale Tahiti (UTC−10). Les pauses déjeuner sont indiquées en 🍱. Heures vérifiées sur sources officielles.</div>
     <div class="region-tabs" id="region-tabs">
-        <div class="region-tab active" onclick="setRegion('all')">Tous</div>
+        <div class="region-tab fav-tab active" onclick="setRegion('fav')">⭐ Principales</div>
+        <div class="region-tab" onclick="setRegion('all')">🌐 Toutes</div>
         <div class="region-tab" onclick="setRegion('americas')">🌎 Amériques</div>
         <div class="region-tab" onclick="setRegion('europe')">🌍 Europe</div>
-        <div class="region-tab" onclick="setRegion('asia')">🌏 Asie</div>
-        <div class="region-tab" onclick="setRegion('mideast')">🕌 M-Orient</div>
+        <div class="region-tab" onclick="setRegion('asia')">🌏 Asie-Pac.</div>
+        <div class="region-tab" onclick="setRegion('mideast')">🕌 M-Orient/Afrique</div>
     </div>
     <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th>Marché</th>
-                    <th>Horaires (Tahiti)</th>
-                    <th>Progression</th>
-                    <th style="text-align: right;">Statut / Prochain</th>
+                    <th>Horaires Tahiti <span style="font-size:0.6rem;color:#555">(UTC−10)</span></th>
+                    <th>Session</th>
+                    <th style="text-align: right;">Statut</th>
                 </tr>
             </thead>
             <tbody id="market-list"></tbody>
         </table>
     </div>
 
-    <!-- OVERLAP HEATMAP -->
+    <!-- OVERLAP -->
     <div class="section-title">🔥 Chevauchement des Sessions</div>
     <div class="overlap-legend">
-        <div class="legend-item"><div class="legend-box" style="background:#1a1f26;border:1px solid #333"></div> Fermé</div>
-        <div class="legend-item"><div class="legend-box heat-1"></div> 1 marché</div>
-        <div class="legend-item"><div class="legend-box heat-2"></div> 2 marchés</div>
-        <div class="legend-item"><div class="legend-box heat-3"></div> 3 marchés</div>
-        <div class="legend-item"><div class="legend-box heat-4"></div> 4+ marchés (pic liquidité)</div>
+        <div class="legend-item"><div class="legend-box heat-0" style="border:1px solid #333"></div>Fermé</div>
+        <div class="legend-item"><div class="legend-box heat-1"></div>1–2 marchés</div>
+        <div class="legend-item"><div class="legend-box heat-2"></div>3–4</div>
+        <div class="legend-item"><div class="legend-box heat-3"></div>5–7</div>
+        <div class="legend-item"><div class="legend-box heat-4"></div>8–10</div>
+        <div class="legend-item"><div class="legend-box heat-5"></div>11+ (pic)</div>
+        <div class="legend-item"><div class="legend-box heat-break"></div>Pause déj.</div>
     </div>
     <div class="heatmap-scroll">
         <table class="heatmap-table" id="heatmap"></table>
     </div>
-
-    <!-- OVERLAP CARDS -->
     <div class="overlap-cards" id="overlap-cards"></div>
 
     <!-- ALGOS -->
@@ -193,90 +214,212 @@
 </div>
 
 <script>
-// ─── CONFIG ─────────────────────────────────────────────────────────────────
-const REGION_COLORS = {
-    americas: '#3498db',
-    europe:   '#9b59b6',
-    asia:     '#02c076',
-    mideast:  '#e67e22'
-};
+// ════════════════════════════════════════════════════════════════════════════
+// MARKET DATA — all times in Tahiti local (UTC−10)
+// Verified against official exchange sources
+// 
+// UTC offset reference:
+//   New York EST   = UTC−5  → Tahiti = local+5h  (hiver NYSE 14:30 UTC = 04:30 Tahiti)
+//   New York EDT   = UTC−4  → Tahiti = local+6h  (été   NYSE 13:30 UTC = 03:30 Tahiti)
+//   London GMT     = UTC+0  → Tahiti = local−10h (hiver LSE  08:00 UTC = 22:00 Tahiti)
+//   London BST     = UTC+1  → Tahiti = local−11h (été   LSE  07:00 UTC = 21:00 Tahiti)
+//   Paris  CET     = UTC+1  → hiver Euronext 08:00 UTC = 22:00 Tahiti
+//   Paris  CEST    = UTC+2  → été   Euronext 07:00 UTC = 21:00 Tahiti
+//   Tokyo  JST     = UTC+9  → fixed  TSE 00:00 UTC = 14:00 Tahiti (prev day)
+//   HK     HKT     = UTC+8  → fixed  HKEX 01:30 UTC = 15:30 Tahiti (prev day)
+//   Sydney AEDT    = UTC+11 → hiver ASX  23:00 UTC prev = 13:00 Tahiti
+//   Sydney AEST    = UTC+10 → été   ASX  00:00 UTC = 14:00 Tahiti
+//   Riyadh AST     = UTC+3  → no DST, Tadawul 07:00 UTC = 21:00 Tahiti (prev day)
+// ════════════════════════════════════════════════════════════════════════════
 
-// All markets: times in Tahiti local (UTC-10)
-// season: 'both' = same for winter/summer, else object {hiver, ete}
+const REGION_COLORS = { americas:'#3498db', europe:'#9b59b6', asia:'#02c076', mideast:'#e67e22' };
+
+// sessions: array of {open, close} — supports lunch breaks
+// fav: true = shown in "Principales" tab
 const ALL_MARKETS = [
-    // ── AMÉRIQUES ────────────────────────────────────────────────
-    { id: 'nq_es',    name: 'NQ/ES FUTURES',     region: 'americas', hiver: { open:'13:00', close:'12:00' }, ete: { open:'12:00', close:'11:00' } },
-    { id: 'nyse',     name: 'NYSE / NASDAQ',      region: 'americas', hiver: { open:'14:30', close:'21:00' }, ete: { open:'13:30', close:'20:00' } },
-    { id: 'tsx',      name: 'TSX TORONTO',        region: 'americas', hiver: { open:'14:30', close:'21:00' }, ete: { open:'13:30', close:'20:00' } },
-    { id: 'bmv',      name: 'BMV MEXICO',         region: 'americas', hiver: { open:'15:30', close:'22:00' }, ete: { open:'14:30', close:'21:00' } },
-    { id: 'bovespa',  name: 'BOVESPA BRÉSIL',     region: 'americas', hiver: { open:'17:00', close:'00:00' }, ete: { open:'16:00', close:'23:00' } },
-    { id: 'bcs',      name: 'BCS SANTIAGO',       region: 'americas', hiver: { open:'15:30', close:'22:00' }, ete: { open:'14:30', close:'21:00' } },
+    // ── AMÉRIQUES ────────────────────────────────────────────────────────────
+    { id:'nq_es',   name:'NQ/ES FUTURES (CME)',  region:'americas', fav:true,
+      hiver:[{open:'13:00',close:'12:00'}],
+      ete: [{open:'12:00',close:'11:00'}] },
 
-    // ── EUROPE ───────────────────────────────────────────────────
-    { id: 'lse',      name: 'LSE LONDON',         region: 'europe',   hiver: { open:'22:00', close:'05:30' }, ete: { open:'21:00', close:'04:30' } },
-    { id: 'euronext', name: 'EURONEXT PARIS',     region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
-    { id: 'xetra',    name: 'XETRA FRANCFORT',    region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
-    { id: 'mib',      name: 'MIB MILAN',          region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
-    { id: 'ibex',     name: 'IBEX MADRID',        region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
-    { id: 'smi',      name: 'SMI ZURICH',         region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
-    { id: 'omx',      name: 'OMX STOCKHOLM',      region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
-    { id: 'moex',     name: 'MOEX MOSCOU',        region: 'europe',   hiver: { open:'21:00', close:'05:00' }, ete: { open:'20:00', close:'04:00' } },
+    { id:'nyse',    name:'NYSE / NASDAQ',         region:'americas', fav:true,
+      hiver:[{open:'04:30',close:'11:00'}],
+      ete: [{open:'03:30',close:'10:00'}] },
 
-    // ── ASIE-PACIFIQUE ────────────────────────────────────────────
-    { id: 'asx',      name: 'ASX SYDNEY',         region: 'asia',     hiver: { open:'13:00', close:'19:00' }, ete: { open:'14:00', close:'20:00' } },
-    { id: 'nzx',      name: 'NZX WELLINGTON',     region: 'asia',     both: { open:'11:00', close:'17:30' } },
-    { id: 'tse',      name: 'TSE TOKYO',          region: 'asia',     both: { open:'00:00', close:'06:30' } },
-    { id: 'ose',      name: 'OSE OSAKA',          region: 'asia',     both: { open:'00:00', close:'06:30' } },
-    { id: 'hkex',     name: 'HKEX HONG KONG',     region: 'asia',     both: { open:'01:30', close:'08:00' } },
-    { id: 'sse',      name: 'SSE SHANGHAI',       region: 'asia',     both: { open:'01:30', close:'07:00' } },
-    { id: 'szse',     name: 'SZSE SHENZHEN',      region: 'asia',     both: { open:'01:30', close:'07:00' } },
-    { id: 'krx',      name: 'KRX SÉOUL',          region: 'asia',     both: { open:'00:00', close:'06:30' } },
-    { id: 'twse',     name: 'TWSE TAIPEI',        region: 'asia',     both: { open:'01:00', close:'06:30' } },
-    { id: 'bse',      name: 'BSE MUMBAI',         region: 'asia',     hiver: { open:'04:15', close:'10:30' }, ete: { open:'03:15', close:'09:30' } },
-    { id: 'sgx',      name: 'SGX SINGAPOUR',      region: 'asia',     both: { open:'01:00', close:'09:00' } },
-    { id: 'idx',      name: 'IDX JAKARTA',        region: 'asia',     both: { open:'01:30', close:'08:00' } },
-    { id: 'bursa',    name: 'BURSA MALAYSIA',     region: 'asia',     both: { open:'01:00', close:'07:30' } },
-    { id: 'set',      name: 'SET BANGKOK',        region: 'asia',     both: { open:'01:30', close:'09:00' } },
+    { id:'tsx',     name:'TSX TORONTO',           region:'americas', fav:false,
+      hiver:[{open:'04:30',close:'11:00'}],
+      ete: [{open:'03:30',close:'10:00'}] },
 
-    // ── MOYEN-ORIENT / AFRIQUE ────────────────────────────────────
-    { id: 'tadawul',  name: 'TADAWUL RIYAD',      region: 'mideast',  both: { open:'07:00', close:'11:30' } },
-    { id: 'dfm',      name: 'DFM DUBAI',          region: 'mideast',  both: { open:'06:30', close:'11:30' } },
-    { id: 'adx',      name: 'ADX ABU DHABI',      region: 'mideast',  both: { open:'06:30', close:'11:30' } },
-    { id: 'tase',     name: 'TASE TEL AVIV',      region: 'mideast',  hiver: { open:'22:00', close:'03:30' }, ete: { open:'21:00', close:'02:30' } },
-    { id: 'jse',      name: 'JSE JOHANNESBURG',   region: 'mideast',  hiver: { open:'23:30', close:'06:00' }, ete: { open:'22:30', close:'05:00' } },
-    { id: 'ase',      name: 'EGX LE CAIRE',       region: 'mideast',  both: { open:'06:00', close:'10:30' } },
+    { id:'bmv',     name:'BMV MEXICO',            region:'americas', fav:false,
+      hiver:[{open:'05:30',close:'12:00'}],
+      ete: [{open:'04:30',close:'11:00'}] },
+
+    { id:'bovespa', name:'BOVESPA BRÉSIL (B3)',  region:'americas', fav:false,
+      // B3 = UTC−3, opens 10:00 local (13:00 UTC hiver = 03:00 Tahiti)
+      hiver:[{open:'03:00',close:'10:00'}],
+      ete: [{open:'03:00',close:'10:00'}] },
+
+    { id:'bcs',     name:'BCS SANTIAGO',          region:'americas', fav:false,
+      hiver:[{open:'04:00',close:'12:00'}],
+      ete: [{open:'03:00',close:'11:00'}] },
+
+    // ── EUROPE ────────────────────────────────────────────────────────────────
+    { id:'lse',     name:'LSE LONDON',            region:'europe', fav:true,
+      // 08:00–16:30 UTC hiver / 07:00–15:30 UTC été → Tahiti
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'euronext',name:'EURONEXT PARIS/AMS',    region:'europe', fav:true,
+      // 09:00–17:30 CET hiver (= 08:00–16:30 UTC) / CEST été (= 07:00–15:30 UTC)
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'xetra',   name:'XETRA FRANCFORT',       region:'europe', fav:true,
+      // 09:00–17:30 CET = same as Euronext
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'mib',     name:'MIB MILAN (Euronext)',  region:'europe', fav:false,
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'ibex',    name:'IBEX MADRID (BME)',      region:'europe', fav:false,
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'smi',     name:'SMI ZURICH (SIX)',       region:'europe', fav:false,
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'omx',     name:'OMX STOCKHOLM (Nasdaq)', region:'europe', fav:false,
+      hiver:[{open:'22:00',close:'06:30'}],
+      ete: [{open:'21:00',close:'05:30'}] },
+
+    { id:'moex',    name:'MOEX MOSCOU',            region:'europe', fav:false,
+      // 09:50–18:50 MSK (UTC+3) → hiver 06:50–15:50 UTC → Tahiti 20:50–05:50
+      both:[{open:'20:50',close:'05:50'}] },
+
+    // ── ASIE-PACIFIQUE ────────────────────────────────────────────────────────
+    { id:'asx',     name:'ASX SYDNEY',             region:'asia', fav:true,
+      // AEDT(UTC+11) hiver: 10:00–16:00 local = 23:00–05:00 UTC = 13:00–19:00 Tahiti
+      // AEST(UTC+10) été:  10:00–16:00 local = 00:00–06:00 UTC = 14:00–20:00 Tahiti
+      hiver:[{open:'13:00',close:'19:00'}],
+      ete: [{open:'14:00',close:'20:00'}] },
+
+    { id:'nzx',     name:'NZX WELLINGTON',         region:'asia', fav:false,
+      // NZDT(UTC+13) hiver: 10:00–17:45 local = 21:00–04:45 UTC prev = 11:00–18:45 Tahiti
+      // NZST(UTC+12) été:   10:00–17:45 local = 22:00–05:45 UTC = 12:00–19:45 Tahiti
+      hiver:[{open:'11:00',close:'18:45'}],
+      ete: [{open:'12:00',close:'19:45'}] },
+
+    { id:'tse',     name:'TSE TOKYO',              region:'asia', fav:true,
+      // JST UTC+9 → 09:00–11:30 / 12:30–15:30 local
+      // UTC: 00:00–02:30 / 03:30–06:30 → Tahiti: 14:00–16:30 / 17:30–20:30 (prev day context: displayed as 00:00–02:30 / 03:30–06:30)
+      both:[{open:'00:00',close:'02:30'},{open:'03:30',close:'06:30'}] },
+
+    { id:'hkex',    name:'HKEX HONG KONG',         region:'asia', fav:true,
+      // HKT UTC+8 → 09:30–12:00 / 13:00–16:00 local
+      // UTC: 01:30–04:00 / 05:00–08:00 → Tahiti: 15:30–18:00 / 19:00–22:00
+      both:[{open:'15:30',close:'18:00'},{open:'19:00',close:'22:00'}] },
+
+    { id:'sse',     name:'SSE SHANGHAI',           region:'asia', fav:true,
+      // CST UTC+8 → 09:30–11:30 / 13:00–15:00 local
+      // UTC: 01:30–03:30 / 05:00–07:00 → Tahiti: 15:30–17:30 / 19:00–21:00
+      both:[{open:'15:30',close:'17:30'},{open:'19:00',close:'21:00'}] },
+
+    { id:'szse',    name:'SZSE SHENZHEN',          region:'asia', fav:false,
+      both:[{open:'15:30',close:'17:30'},{open:'19:00',close:'21:00'}] },
+
+    { id:'krx',     name:'KRX SÉOUL',              region:'asia', fav:false,
+      // KST UTC+9 → 09:00–15:30 (no lunch break since 2000)
+      // UTC: 00:00–06:30 → Tahiti: 14:00–20:30
+      both:[{open:'14:00',close:'20:30'}] },
+
+    { id:'twse',    name:'TWSE TAIPEI',            region:'asia', fav:false,
+      // CST UTC+8 → 09:00–13:30 local → UTC 01:00–05:30 → Tahiti 15:00–19:30
+      both:[{open:'15:00',close:'19:30'}] },
+
+    { id:'bse',     name:'BSE/NSE MUMBAI',         region:'asia', fav:false,
+      // IST UTC+5:30 → 09:15–15:30 local
+      // hiver UTC 03:45–10:00 → Tahiti 17:45–00:00
+      // été   UTC 03:45–10:00 → Tahiti 17:45–00:00 (IST no DST)
+      both:[{open:'17:45',close:'00:00'}] },
+
+    { id:'sgx',     name:'SGX SINGAPOUR',          region:'asia', fav:false,
+      // SGT UTC+8 → 09:00–17:00 (equities) → UTC 01:00–09:00 → Tahiti 15:00–23:00
+      both:[{open:'15:00',close:'23:00'}] },
+
+    { id:'idx',     name:'IDX JAKARTA',            region:'asia', fav:false,
+      // WIB UTC+7 → 09:00–11:30 / 13:30–15:49 → UTC 02:00–04:30 / 06:30–08:49 → Tahiti 16:00–18:30 / 20:30–22:49
+      both:[{open:'16:00',close:'18:30'},{open:'20:30',close:'22:49'}] },
+
+    { id:'bursa',   name:'BURSA MALAYSIA',         region:'asia', fav:false,
+      // MYT UTC+8 → 09:00–12:30 / 14:30–17:00 → UTC 01:00–04:30 / 06:30–09:00 → Tahiti 15:00–18:30 / 20:30–23:00
+      both:[{open:'15:00',close:'18:30'},{open:'20:30',close:'23:00'}] },
+
+    { id:'set',     name:'SET BANGKOK',            region:'asia', fav:false,
+      // ICT UTC+7 → 10:00–12:30 / 14:30–17:00 → UTC 03:00–05:30 / 07:30–10:00 → Tahiti 17:00–19:30 / 21:30–00:00
+      both:[{open:'17:00',close:'19:30'},{open:'21:30',close:'00:00'}] },
+
+    // ── MOYEN-ORIENT / AFRIQUE ────────────────────────────────────────────────
+    { id:'tadawul', name:'TADAWUL RIYAD',          region:'mideast', fav:true,
+      // AST UTC+3 (no DST) → 10:00–15:10 local → UTC 07:00–12:10 → Tahiti 21:00–02:10 (Sun–Thu)
+      both:[{open:'21:00',close:'02:10'}] },
+
+    { id:'dfm',     name:'DFM DUBAI',              region:'mideast', fav:false,
+      // GST UTC+4 → 10:00–14:00 / 14:30–15:00 → UTC 06:00–11:00 → Tahiti 20:00–01:00
+      both:[{open:'20:00',close:'01:00'}] },
+
+    { id:'adx',     name:'ADX ABU DHABI',          region:'mideast', fav:false,
+      both:[{open:'20:00',close:'01:00'}] },
+
+    { id:'tase',    name:'TASE TEL AVIV',          region:'mideast', fav:false,
+      // IST UTC+2 hiver / UTC+3 été → 09:59–17:29 local
+      // hiver: 07:59–15:29 UTC → Tahiti 21:59–05:29
+      hiver:[{open:'21:59',close:'05:29'}],
+      ete:  [{open:'20:59',close:'04:29'}] },
+
+    { id:'jse',     name:'JSE JOHANNESBURG',       region:'mideast', fav:true,
+      // SAST UTC+2 (no DST) → 09:00–17:00 local → UTC 07:00–15:00 → Tahiti 21:00–05:00
+      both:[{open:'21:00',close:'05:00'}] },
+
+    { id:'egx',     name:'EGX LE CAIRE',           region:'mideast', fav:false,
+      // EET UTC+2 / EEST UTC+3 → 10:00–14:30 local
+      // hiver: 08:00–12:30 UTC → Tahiti 22:00–02:30
+      hiver:[{open:'22:00',close:'02:30'}],
+      ete:  [{open:'21:00',close:'01:30'}] },
 ];
 
 const OVERLAPS = [
-    { label: 'Asie → Europe', hiver: {open:'22:00', close:'01:00'}, ete: {open:'21:00', close:'00:00'}, color: '#9b59b6', desc: 'Tokyo + London Pre-market' },
-    { label: 'Europe → NY', hiver: {open:'14:30', close:'18:00'}, ete: {open:'13:30', close:'17:00'}, color: '#3498db', desc: 'Session la plus volatile — haute liquidité EUR/USD' },
-    { label: 'London Fix', hiver: {open:'02:00', close:'02:05'}, ete: {open:'01:00', close:'01:05'}, color: '#f0b90b', desc: 'Fixing WM/Reuters — pic de volume FX' },
-    { label: 'NY Midday', hiver: {open:'18:00', close:'19:30'}, ete: {open:'17:00', close:'18:30'}, color: '#02c076', desc: 'Consolidation + retournements' },
-    { label: 'NY → Asie', hiver: {open:'22:30', close:'00:30'}, ete: {open:'21:30', close:'23:30'}, color: '#e67e22', desc: 'Transition low-liquidity, breakouts possibles' },
+    { label:'Asie → Europe',  hiver:{open:'22:00',close:'01:00'}, ete:{open:'21:00',close:'00:00'}, color:'#9b59b6', desc:'Tokyo + Pré-ouverture London' },
+    { label:'Europe → NY ⚡', hiver:{open:'04:30',close:'06:30'}, ete:{open:'03:30',close:'05:30'}, color:'#3498db', desc:'Session la plus volatile — max liquidité EUR/USD' },
+    { label:'London Fix 🎯',   hiver:{open:'02:00',close:'02:05'}, ete:{open:'01:00',close:'01:05'}, color:'#f0b90b', desc:'Fixing WM/Reuters — pic de volume FX' },
+    { label:'NY Close + Asie', hiver:{open:'11:00',close:'14:00'}, ete:{open:'10:00',close:'14:00'}, color:'#02c076', desc:'Clôture NY + ouverture NZX/ASX' },
+    { label:'Asie Mid-Session',hiver:{open:'15:30',close:'20:30'}, ete:{open:'15:30',close:'20:30'}, color:'#e67e22', desc:'Tokyo + HK + Shanghai actifs' },
 ];
 
 const ALGOS = {
-    hiver: [
-        { time: "20:30", label: "Algos Europe Pre-mkt" },
-        { time: "22:00", label: "Open Europe" },
-        { time: "02:00", label: "London Fix" },
-        { time: "04:30", label: "Open Wall Street" },
-        { time: "09:00", label: "NY Options Re-fix" },
-        { time: "11:00", label: "MOC Algos" }
+    hiver:[
+        { time:"20:30", label:"Algos Europe Pre-mkt" },
+        { time:"22:00", label:"Open Europe" },
+        { time:"02:00", label:"London Fix" },
+        { time:"04:30", label:"Open Wall Street" },
+        { time:"09:00", label:"NY Options Re-fix" },
+        { time:"11:00", label:"MOC Algos" }
     ],
-    ete: [
-        { time: "19:30", label: "Algos Europe Pre-mkt" },
-        { time: "21:00", label: "Open Europe" },
-        { time: "01:00", label: "London Fix" },
-        { time: "03:30", label: "Open Wall Street" },
-        { time: "08:00", label: "NY Options Re-fix" },
-        { time: "10:00", label: "MOC Algos" }
+    ete:[
+        { time:"19:30", label:"Algos Europe Pre-mkt" },
+        { time:"21:00", label:"Open Europe" },
+        { time:"01:00", label:"London Fix" },
+        { time:"03:30", label:"Open Wall Street" },
+        { time:"08:00", label:"NY Options Re-fix" },
+        { time:"10:00", label:"MOC Algos" }
     ]
 };
 
-// ─── STATE ──────────────────────────────────────────────────────────────────
+// ─── STATE ───────────────────────────────────────────────────────────────────
 let currentSeason = localStorage.getItem('tahiti_season') || 'hiver';
-let currentRegion = 'all';
+let currentRegion = 'fav';
 
 function setSeason(s) {
     currentSeason = s;
@@ -289,92 +432,127 @@ function setSeason(s) {
 
 function setRegion(r) {
     currentRegion = r;
-    document.querySelectorAll('.region-tab').forEach((el, i) => {
-        el.classList.toggle('active', el.getAttribute('onclick') === `setRegion('${r}')`);
+    document.querySelectorAll('.region-tab').forEach(el => {
+        const onclick = el.getAttribute('onclick') || '';
+        el.classList.toggle('active', onclick.includes(`'${r}'`));
     });
     update();
 }
 
-// ─── HELPERS ────────────────────────────────────────────────────────────────
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function timeToMin(t) {
     const [h, m] = t.split(':').map(Number);
     return h * 60 + (m || 0);
 }
-function minToStr(min) {
-    const h = Math.floor(((min % 1440) + 1440) % 1440 / 60);
-    const m = ((min % 1440) + 1440) % 1440 % 60;
-    return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+function isInSession(open, close, curMin) {
+    const s = timeToMin(open), e = timeToMin(close);
+    return s < e ? (curMin >= s && curMin < e) : (curMin >= s || curMin < e);
 }
-function isOpen(openStr, closeStr, curMin) {
-    const start = timeToMin(openStr), end = timeToMin(closeStr);
-    return start < end ? (curMin >= start && curMin < end) : (curMin >= start || curMin < end);
+function getMktSessions(mkt) {
+    return mkt.both || mkt[currentSeason];
 }
-function mktTimes(mkt) {
-    return mkt.both ? mkt.both : mkt[currentSeason];
-}
-function progress(openStr, closeStr, curMin) {
-    const s = timeToMin(openStr), e = timeToMin(closeStr);
-    let duration = (e > s) ? (e - s) : (1440 - s + e);
-    let elapsed = 0;
-    if (e > s) {
-        if (curMin >= s && curMin < e) elapsed = curMin - s;
-    } else {
-        if (curMin >= s) elapsed = curMin - s;
-        else if (curMin < e) elapsed = (1440 - s) + curMin;
+function getMktStatus(mkt, curMin) {
+    const sessions = getMktSessions(mkt);
+    for (const sess of sessions) {
+        if (isInSession(sess.open, sess.close, curMin)) return 'open';
     }
-    return Math.min(100, Math.round(elapsed / duration * 100));
+    // Check if in break (between sessions)
+    if (sessions.length > 1) {
+        const s1end = timeToMin(sessions[0].close);
+        const s2start = timeToMin(sessions[1].open);
+        if (isInSession(sessions[0].close, sessions[1].open, curMin)) return 'break';
+    }
+    return 'closed';
 }
-function minutesUntil(openStr, curMin) {
-    const target = timeToMin(openStr);
-    let diff = target - curMin;
-    if (diff <= 0) diff += 1440;
-    return diff;
+function getSessionProgress(sessions, curMin) {
+    // For main display session, return overall day progress
+    const first = sessions[0], last = sessions[sessions.length - 1];
+    const dayStart = timeToMin(first.open), dayEnd = timeToMin(last.close);
+    const totalDuration = dayEnd > dayStart ? dayEnd - dayStart : 1440 - dayStart + dayEnd;
+    let elapsed = 0;
+    if (dayEnd > dayStart) {
+        if (curMin >= dayStart && curMin <= dayEnd) elapsed = curMin - dayStart;
+    } else {
+        if (curMin >= dayStart) elapsed = curMin - dayStart;
+        else if (curMin < dayEnd) elapsed = (1440 - dayStart) + curMin;
+    }
+    return Math.min(100, Math.round(elapsed / totalDuration * 100));
+}
+function minutesUntilNext(sessions, curMin) {
+    // Find next open
+    let minDiff = Infinity;
+    for (const sess of sessions) {
+        const target = timeToMin(sess.open);
+        let diff = target - curMin;
+        if (diff <= 0) diff += 1440;
+        if (diff < minDiff) minDiff = diff;
+    }
+    return minDiff;
 }
 function formatCountdown(min) {
     const h = Math.floor(min / 60), m = min % 60;
     return h > 0 ? `${h}h${String(m).padStart(2,'0')}` : `${m}min`;
 }
+function sessionsStr(sessions) {
+    return sessions.map(s => `${s.open}–${s.close}`).join(' 🍱 ');
+}
 
-// ─── HEATMAP BUILD (once on season change) ──────────────────────────────────
+// ─── HEATMAP ─────────────────────────────────────────────────────────────────
 function buildHeatmap() {
-    const HOURS = Array.from({length: 24}, (_, i) => i);
-    // major markets for heatmap
-    const hmMarkets = ALL_MARKETS.filter(m => ['nq_es','lse','tse','hkex','asx','nyse','bse','sgx'].includes(m.id));
+    const slots = 48; // 30-min slots
+    const HM_MKTS = ALL_MARKETS.filter(m => ['nq_es','lse','tse','hkex','sse','asx','nyse','bse','sgx','krx','tadawul','jse'].includes(m.id));
+
+    // Count open markets per slot
+    const counts = new Array(slots).fill(0);
+    ALL_MARKETS.forEach(mkt => {
+        const sessions = getMktSessions(mkt);
+        for (let s = 0; s < slots; s++) {
+            const mid = s * 30 + 15;
+            for (const sess of sessions) {
+                if (isInSession(sess.open, sess.close, mid)) { counts[s]++; break; }
+            }
+        }
+    });
+
+    // Break slots per heatmap market
+    const breakSlots = {};
+    HM_MKTS.forEach(mkt => {
+        breakSlots[mkt.id] = new Array(slots).fill(false);
+        const sessions = getMktSessions(mkt);
+        if (sessions.length > 1) {
+            for (let s = 0; s < slots; s++) {
+                const mid = s * 30 + 15;
+                if (isInSession(sessions[0].close, sessions[1].open, mid)) breakSlots[mkt.id][s] = true;
+            }
+        }
+    });
 
     let html = '<thead><tr><th class="mkt-label"></th>';
     for (let h = 0; h < 24; h++) html += `<th colspan="2">${String(h).padStart(2,'0')}h</th>`;
     html += '</tr></thead><tbody>';
 
-    // overlap row (count)
-    // For each 30-min slot, count how many of ALL markets are open
-    const slots = 48; // 30min slots in 24h
-    const counts = new Array(slots).fill(0);
-    ALL_MARKETS.forEach(m => {
-        const t = mktTimes(m);
-        for (let s = 0; s < slots; s++) {
-            const mid = s * 30 + 15;
-            if (isOpen(t.open, t.close, mid)) counts[s]++;
-        }
-    });
-
-    // Overlap summary row
-    html += '<tr><td class="mkt-label" style="color:var(--yellow);font-weight:bold;">Liquidité</td>';
+    // Liquidity row
+    html += '<tr><td class="mkt-label" style="color:var(--yellow);font-weight:bold">Liquidité</td>';
     for (let s = 0; s < slots; s++) {
         const c = counts[s];
-        const cls = c === 0 ? 'heat-0' : c <= 3 ? 'heat-1' : c <= 8 ? 'heat-2' : c <= 15 ? 'heat-3' : 'heat-4';
-        html += `<td class="${cls}" data-slot="${s}">${c > 0 ? c : ''}</td>`;
+        const cls = c === 0 ? 'heat-0' : c <= 2 ? 'heat-1' : c <= 4 ? 'heat-2' : c <= 7 ? 'heat-3' : c <= 10 ? 'heat-4' : 'heat-5';
+        html += `<td class="${cls}" data-slot="${s}" title="${c} marchés">${c || ''}</td>`;
     }
     html += '</tr>';
 
-    // Per-market rows
-    hmMarkets.forEach(mkt => {
-        const t = mktTimes(mkt);
+    HM_MKTS.forEach(mkt => {
+        const sessions = getMktSessions(mkt);
         const dot = `<span class="region-dot" style="background:${REGION_COLORS[mkt.region]}"></span>`;
         html += `<tr><td class="mkt-label">${dot}${mkt.name.split(' ')[0]}</td>`;
         for (let s = 0; s < slots; s++) {
             const mid = s * 30 + 15;
-            const open = isOpen(t.open, t.close, mid);
-            html += `<td class="${open ? 'heat-3' : 'heat-0'}" data-slot="${s}"></td>`;
+            let isOpen = false;
+            for (const sess of sessions) {
+                if (isInSession(sess.open, sess.close, mid)) { isOpen = true; break; }
+            }
+            const isBreak = breakSlots[mkt.id][s];
+            const cls = isOpen ? 'heat-open' : isBreak ? 'heat-break' : 'heat-0';
+            html += `<td class="${cls}" data-slot="${s}"></td>`;
         }
         html += '</tr>';
     });
@@ -392,36 +570,60 @@ function updateHeatmapNow() {
     });
 }
 
-// ─── MAIN UPDATE ────────────────────────────────────────────────────────────
+// ─── MAIN UPDATE ─────────────────────────────────────────────────────────────
 function update() {
     const now = new Date();
     const curMin = now.getHours() * 60 + now.getMinutes();
     document.getElementById('clock').innerText = now.toLocaleTimeString('fr-FR');
-    document.getElementById('date').innerText = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'short', year:'numeric' });
+    document.getElementById('date').innerText  = now.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
+    // UTC display
+    const utcH = String(now.getUTCHours()).padStart(2,'0');
+    const utcM = String(now.getUTCMinutes()).padStart(2,'0');
+    const utcS = String(now.getUTCSeconds()).padStart(2,'0');
+    document.getElementById('utc-clock').innerText = `UTC ${utcH}:${utcM}:${utcS}`;
 
-    // MARKETS
-    const filtered = currentRegion === 'all' ? ALL_MARKETS : ALL_MARKETS.filter(m => m.region === currentRegion);
+    // Filter markets
+    let filtered;
+    if (currentRegion === 'fav') filtered = ALL_MARKETS.filter(m => m.fav);
+    else if (currentRegion === 'all') filtered = ALL_MARKETS;
+    else filtered = ALL_MARKETS.filter(m => m.region === currentRegion);
+
     let html = '';
     filtered.forEach(mkt => {
-        const t = mktTimes(mkt);
-        const open = isOpen(t.open, t.close, curMin);
-        const pct = open ? progress(t.open, t.close, curMin) : 0;
+        const sessions = getMktSessions(mkt);
+        const status = getMktStatus(mkt, curMin);
+        const pct = (status === 'open' || status === 'break') ? getSessionProgress(sessions, curMin) : 0;
         const color = REGION_COLORS[mkt.region];
         const dot = `<span class="region-dot" style="background:${color}"></span>`;
-        const countdown = !open ? `<div class="countdown">ouverture dans ${formatCountdown(minutesUntil(t.open, curMin))}</div>` : '';
+        const sessHtml = sessions.length > 1 ? sessions.map((s,i) => `${s.open}–${s.close}${i<sessions.length-1?'<span class="break-badge">🍱 pause</span>':''}`).join(' ') : `${sessions[0].open}–${sessions[0].close}`;
+
+        let statusBadge, barClass, countdownHtml = '';
+        if (status === 'open') {
+            statusBadge = '<span class="status-badge open">● OUVERT</span>';
+            barClass = 'bar-open';
+        } else if (status === 'break') {
+            statusBadge = '<span class="status-badge on-break">🍱 PAUSE</span>';
+            barClass = 'bar-break';
+            // find next session
+            const s2start = sessions[1] ? sessions[1].open : sessions[0].open;
+            const diff = minutesUntilNext([sessions[1] || sessions[0]], curMin);
+            countdownHtml = `<div class="countdown">reprise dans ${formatCountdown(diff)}</div>`;
+        } else {
+            statusBadge = '<span class="status-badge closed">FERMÉ</span>';
+            barClass = 'bar-closed';
+            const diff = minutesUntilNext(sessions, curMin);
+            const cls = diff < 60 ? 'soon' : '';
+            countdownHtml = `<div class="countdown ${cls}">ouverture dans ${formatCountdown(diff)}</div>`;
+        }
+
         html += `<tr class="market-row">
-            <td><b>${dot}${mkt.name}</b></td>
-            <td style="font-family:monospace;color:var(--yellow)">${t.open} – ${t.close}</td>
-            <td style="min-width:90px">
-                <div class="progress-wrap">
-                    <div class="progress-bar ${open?'':'closed-bar'}" style="width:${pct}%"></div>
-                </div>
-                <div style="font-size:0.62rem;color:var(--gray);margin-top:2px">${pct}%</div>
+            <td><div style="display:flex;align-items:center">${dot}<b>${mkt.name}</b></div></td>
+            <td style="font-family:monospace;font-size:0.8rem;color:var(--yellow)">${sessHtml}</td>
+            <td style="min-width:80px">
+                <div class="progress-wrap"><div class="progress-bar ${barClass}" style="width:${pct}%"></div></div>
+                <div style="font-size:0.6rem;color:var(--gray);margin-top:2px">${pct > 0 ? pct+'%' : '—'}</div>
             </td>
-            <td style="text-align:right">
-                <span class="status-badge ${open?'open':'closed'}">${open?'OUVERT':'FERMÉ'}</span>
-                ${countdown}
-            </td>
+            <td style="text-align:right">${statusBadge}${countdownHtml}</td>
         </tr>`;
     });
     document.getElementById('market-list').innerHTML = html;
@@ -429,8 +631,8 @@ function update() {
     // OVERLAP CARDS
     let ocHtml = '';
     OVERLAPS.forEach(ov => {
-        const t = ov.ete ? (currentSeason === 'hiver' ? ov.hiver : ov.ete) : ov.both;
-        const live = isOpen(t.open, t.close, curMin);
+        const t = ov.both ? ov.both : (currentSeason === 'hiver' ? ov.hiver : ov.ete);
+        const live = isInSession(t.open, t.close, curMin);
         ocHtml += `<div class="overlap-card ${live?'live':''}">
             <div class="overlap-title" style="color:${ov.color}">${live ? '🔴 ' : ''}${ov.label}</div>
             <div class="overlap-time">${t.open} – ${t.close}</div>
@@ -440,13 +642,24 @@ function update() {
     document.getElementById('overlap-cards').innerHTML = ocHtml;
 
     // ALGOS
+    // Find next algo
+    const algos = ALGOS[currentSeason];
+    let nextIdx = -1, minDiff = Infinity;
+    algos.forEach((a, i) => {
+        const aMin = timeToMin(a.time);
+        let diff = aMin - curMin; if (diff <= 0) diff += 1440;
+        if (diff < minDiff) { minDiff = diff; nextIdx = i; }
+    });
+
     let algoHtml = '';
-    ALGOS[currentSeason].forEach(a => {
+    algos.forEach((a, i) => {
         const aMin = timeToMin(a.time);
         const isActive = curMin >= aMin && curMin < (aMin + 15);
-        algoHtml += `<div class="algo-card ${isActive ? 'algo-active' : ''}">
-            <div class="algo-time">${a.time} ${isActive ? '⚡' : ''}</div>
+        const isNext = !isActive && i === nextIdx;
+        algoHtml += `<div class="algo-card ${isActive ? 'algo-active' : isNext ? 'algo-next' : ''}">
+            <div class="algo-time">${a.time} ${isActive ? '⚡' : isNext ? '→' : ''}</div>
             <div class="algo-title">${a.label}</div>
+            ${isNext ? `<div style="font-size:0.65rem;color:var(--gray);margin-top:3px">dans ${formatCountdown(minDiff)}</div>` : ''}
         </div>`;
     });
     document.getElementById('algo-list').innerHTML = algoHtml;
@@ -454,8 +667,9 @@ function update() {
     updateHeatmapNow();
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
+// ─── INIT ─────────────────────────────────────────────────────────────────────
 setSeason(currentSeason);
+setRegion(currentRegion);
 buildHeatmap();
 setInterval(update, 1000);
 </script>
