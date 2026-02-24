@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tahiti Trading Terminal PRO + Dynamic Algo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tahiti Trading Terminal</title>
     <style>
         :root {
             --bg: #0b0e11;
@@ -15,87 +15,93 @@
             --gray: #848e9c;
             --blue: #3498db;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 10px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 1000px; }
         
-        #alert-march { 
-            background: var(--yellow); color: black; width: 100%; padding: 10px; 
-            text-align: center; font-weight: bold; border-radius: 8px; margin-bottom: 15px;
-            display: none; font-size: 0.9rem;
-        }
-
+        /* Header & Clock */
         .header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 20px; background: var(--card); padding: 20px; 
-            border-radius: 12px; border-bottom: 4px solid var(--yellow);
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; 
+            margin-bottom: 15px; background: var(--card); padding: 15px; 
+            border-radius: 12px; border-bottom: 4px solid var(--yellow); gap: 10px;
         }
-        .clock { font-size: 2.2rem; font-weight: bold; font-family: monospace; color: var(--yellow); }
+        .clock-section { flex: 1; min-width: 200px; }
+        .clock { font-size: clamp(1.8rem, 5vw, 2.2rem); font-weight: bold; font-family: monospace; color: var(--yellow); }
         
-        .season-switch { background: #2b3139; padding: 10px; border-radius: 8px; display: flex; gap: 10px; align-items: center; border: 1px solid #333; }
+        /* Saison Switch */
+        .season-switch { background: #2b3139; padding: 5px; border-radius: 8px; display: flex; gap: 5px; align-items: center; }
         .btn-season { 
-            padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; 
-            background: transparent; color: var(--gray); font-weight: bold; transition: 0.3s;
+            padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; 
+            background: transparent; color: var(--gray); font-weight: bold; font-size: 0.8rem;
         }
         .btn-season.active { background: var(--yellow); color: black; }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-bottom: 20px; }
-        th { text-align: left; padding: 12px; color: var(--gray); font-size: 0.85rem; }
+        /* Tables Responsive */
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-bottom: 20px; min-width: 300px; }
+        th { text-align: left; padding: 10px; color: var(--gray); font-size: 0.75rem; text-transform: uppercase; }
         tr { background: var(--card); }
-        td { padding: 15px; border: none; font-size: 0.95rem; }
-        td:first-child { border-radius: 8px 0 0 8px; font-weight: bold; }
-        td:last-child { border-radius: 0 8px 8px 0; text-align: right; }
-
-        .status-badge { padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        td { padding: 12px 10px; border: none; font-size: 0.9rem; }
+        
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; white-space: nowrap; }
         .open { color: var(--green); border: 1px solid var(--green); }
         .closed { color: var(--red); border: 1px solid var(--red); opacity: 0.6; }
 
-        .algo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-bottom: 30px; }
-        .algo-card { background: var(--card); padding: 15px; border-radius: 8px; border-left: 3px solid var(--blue); transition: 0.3s; }
-        .algo-time { color: var(--yellow); font-weight: bold; font-size: 1.1rem; }
-        .algo-title { font-size: 0.85rem; color: var(--text); margin-top: 5px; }
-        .algo-active { border-left: 5px solid var(--green); background: rgba(2, 192, 118, 0.1); transform: scale(1.02); }
+        /* Grid Algos */
+        .algo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 30px; }
+        .algo-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); }
+        .algo-active { border-left: 5px solid var(--green); background: rgba(2, 192, 118, 0.1); }
 
-        .section-title { margin: 25px 0 15px 5px; font-weight: bold; color: var(--yellow); font-size: 1rem; display: flex; align-items: center; }
-        .section-title::after { content: ""; flex: 1; height: 1px; background: #333; margin-left: 15px; }
-        .calendar-wrapper { border-radius: 12px; overflow: hidden; height: 500px; background: var(--card); }
+        .section-title { margin: 20px 0 10px 5px; font-weight: bold; color: var(--yellow); font-size: 0.9rem; display: flex; align-items: center; }
+        .section-title::after { content: ""; flex: 1; height: 1px; background: #333; margin-left: 10px; }
+        
+        .calendar-wrapper { border-radius: 12px; overflow: hidden; height: 500px; background: var(--card); border: 1px solid #333; }
+
+        /* Media Queries pour Mobile */
+        @media (max-width: 480px) {
+            .header { justify-content: center; text-align: center; }
+            .season-switch { width: 100%; justify-content: center; }
+            td { padding: 10px 5px; font-size: 0.8rem; }
+            .clock { font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="alert-march">⚠️ Rappel : New York passe à l'heure d'été le 8 Mars. Pensez à cliquer sur "SUMMER" !</div>
-
     <div class="header">
-        <div>
-            <div style="color: var(--gray); font-size: 0.9rem;">TAHITI TIME</div>
+        <div class="clock-section">
+            <div style="color: var(--gray); font-size: 0.8rem;">TAHITI TIME</div>
             <div class="clock" id="clock">00:00:00</div>
-            <div id="date" style="font-size: 0.9rem; color: var(--text);">--</div>
+            <div id="date" style="font-size: 0.8rem; color: var(--text);">--</div>
         </div>
         
         <div class="season-switch">
-            <span style="font-size: 0.8rem; color: var(--gray);">US/EU SEASON :</span>
             <button class="btn-season active" id="btn-hiver" onclick="setSeason('hiver')">WINTER</button>
             <button class="btn-season" id="btn-ete" onclick="setSeason('ete')">SUMMER</button>
         </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Marché</th>
-                <th>Horaires (TAHT)</th>
-                <th style="text-align: right;">Statut</th>
-            </tr>
-        </thead>
-        <tbody id="market-list"></tbody>
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Marché</th>
+                    <th>Horaires</th>
+                    <th style="text-align: right;">Statut</th>
+                </tr>
+            </thead>
+            <tbody id="market-list"></tbody>
+        </table>
+    </div>
 
-    <div class="section-title">🤖 Activation Algos (Ajustement Dynamique)</div>
+    <div class="section-title">🤖 Activation Algos</div>
     <div class="algo-grid" id="algo-list"></div>
 
     <div class="section-title">📅 Calendrier Économique</div>
     <div class="calendar-wrapper">
-        <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container" style="height: 100%;">
             <div class="tradingview-widget-container__widget"></div>
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
             { "colorTheme": "dark", "isMaximized": true, "width": "100%", "height": "100%", "locale": "fr", "importanceFilter": "0,1", "countryFilter": "us,eu,gb,jp,au" }
@@ -106,42 +112,40 @@
 
 <script>
     let currentSeason = 'hiver';
-
     const config = {
         hiver: {
             markets: [
-                { name: "FUTURES US (NQ/ES)", open: "13:00", close: "12:00" },
-                { name: "NYSE (Actions)", open: "04:30", close: "11:00" },
-                { name: "ASX (Australie)", open: "13:00", close: "19:00" }
+                { name: "NQ/ES FUTURES", open: "13:00", close: "12:00" },
+                { name: "NYSE CASH", open: "04:30", close: "11:00" },
+                { name: "ASX SYDNEY", open: "13:00", close: "19:00" }
             ],
             algos: [
-                { time: "20:30", label: "Algos Europe (Pre-market)" },
-                { time: "22:00", label: "Open Cash Europe (Volatilité)" },
-                { time: "02:00", label: "London Fix (Rebalancing)" },
-                { time: "04:30", label: "Open Cash NY (Wall Street)" },
-                { time: "09:00", label: "NY Options / Re-fix" },
-                { time: "11:00", label: "MOC Algos (Fin de session)" }
+                { time: "20:30", label: "Algos Europe Pre-mkt" },
+                { time: "22:00", label: "Open Europe" },
+                { time: "02:00", label: "London Fix" },
+                { time: "04:30", label: "Open Wall Street" },
+                { time: "09:00", label: "NY Options Re-fix" },
+                { time: "11:00", label: "MOC Algos" }
             ]
         },
         ete: {
             markets: [
-                { name: "FUTURES US (NQ/ES)", open: "12:00", close: "11:00" },
-                { name: "NYSE (Actions)", open: "03:30", close: "10:00" },
-                { name: "ASX (Australie)", open: "14:00", close: "20:00" }
+                { name: "NQ/ES FUTURES", open: "12:00", close: "11:00" },
+                { name: "NYSE CASH", open: "03:30", close: "10:00" },
+                { name: "ASX SYDNEY", open: "14:00", close: "20:00" }
             ],
             algos: [
-                { time: "19:30", label: "Algos Europe (Pre-market)" },
-                { time: "21:00", label: "Open Cash Europe (Volatilité)" },
-                { time: "01:00", label: "London Fix (Rebalancing)" },
-                { time: "03:30", label: "Open Cash NY (Wall Street)" },
-                { time: "08:00", label: "NY Options / Re-fix" },
-                { time: "10:00", label: "MOC Algos (Fin de session)" }
+                { time: "19:30", label: "Algos Europe Pre-mkt" },
+                { time: "21:00", label: "Open Europe" },
+                { time: "01:00", label: "London Fix" },
+                { time: "03:30", label: "Open Wall Street" },
+                { time: "08:00", label: "NY Options Re-fix" },
+                { time: "10:00", label: "MOC Algos" }
             ]
         },
         fixe: [
-            { name: "TSE (Japon)", open: "14:00", close: "20:00" },
-            { name: "HKEX (Hong Kong)", open: "15:30", close: "22:00" },
-            { name: "EUROPE (DAX/CAC)", open: "22:00", close: "06:30" }
+            { name: "TSE TOKYO", open: "14:00", close: "20:00" },
+            { name: "HKEX HONG KONG", open: "15:30", close: "22:00" }
         ]
     };
 
@@ -160,33 +164,24 @@
     function update() {
         const now = new Date();
         const curMin = now.getHours() * 60 + now.getMinutes();
-        if(now.getMonth() === 2 && now.getDate() <= 10) document.getElementById('alert-march').style.display = 'block';
-
         document.getElementById('clock').innerText = now.toLocaleTimeString('fr-FR');
-        document.getElementById('date').innerText = now.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'});
+        document.getElementById('date').innerText = now.toLocaleDateString('fr-FR', {weekday: 'short', day: 'numeric', month: 'short'});
 
-        // Update Marchés
         const currentMarkets = [...config[currentSeason].markets, ...config.fixe];
         let marketHtml = '';
         currentMarkets.forEach(m => {
             const start = timeToMin(m.open);
             const end = timeToMin(m.close);
             let isOpen = (start < end) ? (curMin >= start && curMin < end) : (curMin >= start || curMin < end);
-            marketHtml += `<tr><td>${m.name}</td><td>${m.open} - ${m.close}</td><td style="text-align: right;"><span class="status-badge ${isOpen ? 'open' : 'closed'}">${isOpen ? '● OUVERT' : '○ FERMÉ'}</span></td></tr>`;
+            marketHtml += `<tr><td><b>${m.name}</b></td><td>${m.open}-${m.close}</td><td style="text-align: right;"><span class="status-badge ${isOpen ? 'open' : 'closed'}">${isOpen ? 'OUVERT' : 'FERMÉ'}</span></td></tr>`;
         });
         document.getElementById('market-list').innerHTML = marketHtml;
 
-        // Update Dynamic Algos
         let algoHtml = '';
         config[currentSeason].algos.forEach(a => {
             const aMin = timeToMin(a.time);
             const isActive = curMin >= aMin && curMin < (aMin + 15);
-            algoHtml += `
-                <div class="algo-card ${isActive ? 'algo-active' : ''}">
-                    <div class="algo-time">${a.time} ${isActive ? '⚡' : ''}</div>
-                    <div class="algo-title">${a.label}</div>
-                    ${isActive ? '<div style="font-size:0.7rem; color:var(--green); margin-top:5px; font-weight:bold;">ACTIVATION EN COURS...</div>' : ''}
-                </div>`;
+            algoHtml += `<div class="algo-card ${isActive ? 'algo-active' : ''}"><div class="algo-time">${a.time} ${isActive ? '⚡' : ''}</div><div class="algo-title">${a.label}</div></div>`;
         });
         document.getElementById('algo-list').innerHTML = algoHtml;
     }
