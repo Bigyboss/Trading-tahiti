@@ -8,186 +8,456 @@
         :root {
             --bg: #0b0e11;
             --card: #1e2329;
+            --card2: #252b35;
             --green: #02c076;
             --red: #f84960;
             --yellow: #f0b90b;
             --text: #eaecef;
             --gray: #848e9c;
             --blue: #3498db;
+            --purple: #9b59b6;
+            --orange: #e67e22;
         }
-        
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 10px; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 1000px; }
-        
-        /* Header & Clock */
-        .header { 
-            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; 
-            margin-bottom: 15px; background: var(--card); padding: 15px; 
+        .container { width: 100%; max-width: 1100px; }
+
+        /* HEADER */
+        .header {
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; background: var(--card); padding: 15px;
             border-radius: 12px; border-bottom: 4px solid var(--yellow); gap: 10px;
         }
         .clock-section { flex: 1; min-width: 200px; }
         .clock { font-size: clamp(1.8rem, 5vw, 2.2rem); font-weight: bold; font-family: monospace; color: var(--yellow); }
-        
-        /* Saison Switch */
+
+        /* SEASON SWITCH */
         .season-switch { background: #2b3139; padding: 5px; border-radius: 8px; display: flex; gap: 5px; align-items: center; }
-        .btn-season { 
-            padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; 
-            background: transparent; color: var(--gray); font-weight: bold; font-size: 0.8rem;
+        .btn-season {
+            padding: 8px 14px; border: none; border-radius: 5px; cursor: pointer;
+            background: transparent; color: var(--gray); font-weight: bold; font-size: 0.8rem; transition: all 0.2s;
         }
         .btn-season.active { background: var(--yellow); color: black; }
 
-        /* Tables Responsive */
-        .table-container { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-bottom: 20px; min-width: 300px; }
-        th { text-align: left; padding: 10px; color: var(--gray); font-size: 0.75rem; text-transform: uppercase; }
-        tr { background: var(--card); }
-        td { padding: 12px 10px; border: none; font-size: 0.9rem; }
-        
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; white-space: nowrap; }
-        .open { color: var(--green); border: 1px solid var(--green); }
-        .closed { color: var(--red); border: 1px solid var(--red); opacity: 0.6; }
-
-        /* Grid Algos */
-        .algo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 30px; }
-        .algo-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); }
-        .algo-active { border-left: 5px solid var(--green); background: rgba(2, 192, 118, 0.1); }
-
+        /* SECTION TITLE */
         .section-title { margin: 20px 0 10px 5px; font-weight: bold; color: var(--yellow); font-size: 0.9rem; display: flex; align-items: center; }
         .section-title::after { content: ""; flex: 1; height: 1px; background: #333; margin-left: 10px; }
-        
-        .calendar-wrapper { border-radius: 12px; overflow: hidden; height: 500px; background: var(--card); border: 1px solid #333; }
 
-        /* Media Queries pour Mobile */
+        /* REGION TABS */
+        .region-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .region-tab {
+            padding: 5px 12px; border-radius: 20px; border: 1px solid #333; cursor: pointer;
+            font-size: 0.75rem; font-weight: bold; background: var(--card2); color: var(--gray);
+            transition: all 0.2s;
+        }
+        .region-tab.active { border-color: var(--yellow); color: var(--yellow); background: rgba(240,185,11,0.1); }
+
+        /* MARKET TABLE */
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 6px; min-width: 300px; }
+        th { text-align: left; padding: 8px 10px; color: var(--gray); font-size: 0.72rem; text-transform: uppercase; }
+        tr.market-row { background: var(--card); transition: background 0.3s; }
+        tr.market-row:hover { background: var(--card2); }
+        td { padding: 10px 10px; border: none; font-size: 0.85rem; }
+        td:first-child { border-radius: 8px 0 0 8px; }
+        td:last-child { border-radius: 0 8px 8px 0; }
+
+        /* PROGRESS BAR */
+        .progress-wrap { margin-top: 4px; height: 3px; background: #333; border-radius: 2px; width: 100%; min-width: 80px; }
+        .progress-bar { height: 3px; border-radius: 2px; background: var(--green); transition: width 0.5s; }
+        .progress-bar.closed-bar { background: var(--gray); }
+
+        /* STATUS */
+        .status-badge { padding: 3px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; white-space: nowrap; }
+        .open { color: var(--green); border: 1px solid var(--green); }
+        .closed { color: var(--gray); border: 1px solid #444; opacity: 0.7; }
+        .region-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+        /* COUNTDOWN */
+        .countdown { font-size: 0.7rem; color: var(--yellow); font-family: monospace; }
+
+        /* OVERLAP HEATMAP */
+        .heatmap-scroll { overflow-x: auto; margin-bottom: 20px; }
+        .heatmap-table { min-width: 700px; width: 100%; border-collapse: collapse; }
+        .heatmap-table th { font-size: 0.65rem; color: var(--gray); padding: 4px 2px; text-align: center; border: none; }
+        .heatmap-table td { width: 3.8%; height: 30px; border: 1px solid #0b0e11; transition: all 0.3s; font-size: 0.55rem; text-align: center; vertical-align: middle; color: transparent; }
+        .heatmap-table td:hover { opacity: 0.85; color: white; }
+        .heatmap-table .mkt-label { width: 110px; font-size: 0.72rem; color: var(--text); text-align: right; padding-right: 8px; white-space: nowrap; background: transparent; border: none; }
+        .heatmap-table .hour-now { outline: 2px solid var(--yellow); outline-offset: -2px; }
+        .heat-0 { background: #1a1f26; }
+        .heat-1 { background: rgba(52,152,219,0.25); }
+        .heat-2 { background: rgba(52,152,219,0.55); }
+        .heat-3 { background: rgba(52,152,219,0.8); }
+        .heat-4 { background: rgba(2,192,118,0.9); }
+        .overlap-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: var(--gray); }
+        .legend-box { width: 14px; height: 14px; border-radius: 3px; }
+
+        /* OVERLAP SUMMARY */
+        .overlap-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .overlap-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); }
+        .overlap-card.live { border-left-color: var(--green); background: rgba(2,192,118,0.07); }
+        .overlap-title { font-weight: bold; font-size: 0.82rem; }
+        .overlap-time { font-family: monospace; color: var(--yellow); font-size: 0.9rem; }
+        .overlap-desc { color: var(--gray); font-size: 0.72rem; margin-top: 3px; }
+
+        /* ALGOS */
+        .algo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 30px; }
+        .algo-card { background: var(--card); padding: 12px; border-radius: 8px; border-left: 3px solid var(--blue); }
+        .algo-active { border-left: 5px solid var(--green); background: rgba(2, 192, 118, 0.1); }
+        .algo-time { font-family: monospace; color: var(--yellow); font-size: 0.9rem; }
+        .algo-title { font-size: 0.8rem; color: var(--text); margin-top: 2px; }
+
+        /* CALENDAR */
+        .calendar-wrapper { border-radius: 12px; overflow: hidden; height: 500px; background: var(--card); border: 1px solid #333; margin-bottom: 20px; }
+
         @media (max-width: 480px) {
             .header { justify-content: center; text-align: center; }
             .season-switch { width: 100%; justify-content: center; }
-            td { padding: 10px 5px; font-size: 0.8rem; }
+            td { padding: 8px 5px; font-size: 0.78rem; }
             .clock { font-size: 1.8rem; }
+            .heatmap-table .mkt-label { width: 80px; font-size: 0.65rem; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
+
+    <!-- HEADER -->
     <div class="header">
         <div class="clock-section">
-            <div style="color: var(--gray); font-size: 0.8rem;">TAHITI TIME</div>
+            <div style="color: var(--gray); font-size: 0.8rem;">🌺 TAHITI LOCAL TIME (UTC-10)</div>
             <div class="clock" id="clock">00:00:00</div>
             <div id="date" style="font-size: 0.8rem; color: var(--text);">--</div>
         </div>
-        
         <div class="season-switch">
-            <button class="btn-season active" id="btn-hiver" onclick="setSeason('hiver')">WINTER</button>
-            <button class="btn-season" id="btn-ete" onclick="setSeason('ete')">SUMMER</button>
+            <button class="btn-season" id="btn-hiver" onclick="setSeason('hiver')">❄️ WINTER</button>
+            <button class="btn-season" id="btn-ete" onclick="setSeason('ete')">☀️ SUMMER</button>
         </div>
     </div>
 
+    <!-- MARKETS -->
+    <div class="section-title">🌍 Marchés Mondiaux</div>
+    <div class="region-tabs" id="region-tabs">
+        <div class="region-tab active" onclick="setRegion('all')">Tous</div>
+        <div class="region-tab" onclick="setRegion('americas')">🌎 Amériques</div>
+        <div class="region-tab" onclick="setRegion('europe')">🌍 Europe</div>
+        <div class="region-tab" onclick="setRegion('asia')">🌏 Asie</div>
+        <div class="region-tab" onclick="setRegion('mideast')">🕌 M-Orient</div>
+    </div>
     <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th>Marché</th>
-                    <th>Horaires</th>
-                    <th style="text-align: right;">Statut</th>
+                    <th>Horaires (Tahiti)</th>
+                    <th>Progression</th>
+                    <th style="text-align: right;">Statut / Prochain</th>
                 </tr>
             </thead>
             <tbody id="market-list"></tbody>
         </table>
     </div>
 
+    <!-- OVERLAP HEATMAP -->
+    <div class="section-title">🔥 Chevauchement des Sessions</div>
+    <div class="overlap-legend">
+        <div class="legend-item"><div class="legend-box" style="background:#1a1f26;border:1px solid #333"></div> Fermé</div>
+        <div class="legend-item"><div class="legend-box heat-1"></div> 1 marché</div>
+        <div class="legend-item"><div class="legend-box heat-2"></div> 2 marchés</div>
+        <div class="legend-item"><div class="legend-box heat-3"></div> 3 marchés</div>
+        <div class="legend-item"><div class="legend-box heat-4"></div> 4+ marchés (pic liquidité)</div>
+    </div>
+    <div class="heatmap-scroll">
+        <table class="heatmap-table" id="heatmap"></table>
+    </div>
+
+    <!-- OVERLAP CARDS -->
+    <div class="overlap-cards" id="overlap-cards"></div>
+
+    <!-- ALGOS -->
     <div class="section-title">🤖 Activation Algos</div>
     <div class="algo-grid" id="algo-list"></div>
 
+    <!-- CALENDAR -->
     <div class="section-title">📅 Calendrier Économique</div>
     <div class="calendar-wrapper">
         <div class="tradingview-widget-container" style="height: 100%;">
             <div class="tradingview-widget-container__widget"></div>
             <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-            { "colorTheme": "dark", "isMaximized": true, "width": "100%", "height": "100%", "locale": "fr", "importanceFilter": "0,1", "countryFilter": "us,eu,gb,jp,au" }
+            { "colorTheme": "dark", "isMaximized": true, "width": "100%", "height": "100%", "locale": "fr", "importanceFilter": "0,1", "countryFilter": "us,eu,gb,jp,au,ca,cn,ch,de,fr" }
             </script>
         </div>
     </div>
+
 </div>
 
 <script>
-    let currentSeason = 'hiver';
-    const config = {
-        hiver: {
-            markets: [
-                { name: "NQ/ES FUTURES", open: "13:00", close: "12:00" },
-                { name: "NYSE CASH", open: "04:30", close: "11:00" },
-                { name: "ASX SYDNEY", open: "13:00", close: "19:00" }
-            ],
-            algos: [
-                { time: "20:30", label: "Algos Europe Pre-mkt" },
-                { time: "22:00", label: "Open Europe" },
-                { time: "02:00", label: "London Fix" },
-                { time: "04:30", label: "Open Wall Street" },
-                { time: "09:00", label: "NY Options Re-fix" },
-                { time: "11:00", label: "MOC Algos" }
-            ]
-        },
-        ete: {
-            markets: [
-                { name: "NQ/ES FUTURES", open: "12:00", close: "11:00" },
-                { name: "NYSE CASH", open: "03:30", close: "10:00" },
-                { name: "ASX SYDNEY", open: "14:00", close: "20:00" }
-            ],
-            algos: [
-                { time: "19:30", label: "Algos Europe Pre-mkt" },
-                { time: "21:00", label: "Open Europe" },
-                { time: "01:00", label: "London Fix" },
-                { time: "03:30", label: "Open Wall Street" },
-                { time: "08:00", label: "NY Options Re-fix" },
-                { time: "10:00", label: "MOC Algos" }
-            ]
-        },
-        fixe: [
-            { name: "TSE TOKYO", open: "14:00", close: "20:00" },
-            { name: "HKEX HONG KONG", open: "15:30", close: "22:00" }
-        ]
-    };
+// ─── CONFIG ─────────────────────────────────────────────────────────────────
+const REGION_COLORS = {
+    americas: '#3498db',
+    europe:   '#9b59b6',
+    asia:     '#02c076',
+    mideast:  '#e67e22'
+};
 
-    function setSeason(s) {
-        currentSeason = s;
-        document.getElementById('btn-hiver').classList.toggle('active', s === 'hiver');
-        document.getElementById('btn-ete').classList.toggle('active', s === 'ete');
-        update();
-    }
+// All markets: times in Tahiti local (UTC-10)
+// season: 'both' = same for winter/summer, else object {hiver, ete}
+const ALL_MARKETS = [
+    // ── AMÉRIQUES ────────────────────────────────────────────────
+    { id: 'nq_es',    name: 'NQ/ES FUTURES',     region: 'americas', hiver: { open:'13:00', close:'12:00' }, ete: { open:'12:00', close:'11:00' } },
+    { id: 'nyse',     name: 'NYSE / NASDAQ',      region: 'americas', hiver: { open:'14:30', close:'21:00' }, ete: { open:'13:30', close:'20:00' } },
+    { id: 'tsx',      name: 'TSX TORONTO',        region: 'americas', hiver: { open:'14:30', close:'21:00' }, ete: { open:'13:30', close:'20:00' } },
+    { id: 'bmv',      name: 'BMV MEXICO',         region: 'americas', hiver: { open:'15:30', close:'22:00' }, ete: { open:'14:30', close:'21:00' } },
+    { id: 'bovespa',  name: 'BOVESPA BRÉSIL',     region: 'americas', hiver: { open:'17:00', close:'00:00' }, ete: { open:'16:00', close:'23:00' } },
+    { id: 'bcs',      name: 'BCS SANTIAGO',       region: 'americas', hiver: { open:'15:30', close:'22:00' }, ete: { open:'14:30', close:'21:00' } },
 
-    function timeToMin(timeStr) {
-        const [h, m] = timeStr.split(':').map(Number);
-        return h * 60 + m;
-    }
+    // ── EUROPE ───────────────────────────────────────────────────
+    { id: 'lse',      name: 'LSE LONDON',         region: 'europe',   hiver: { open:'22:00', close:'05:30' }, ete: { open:'21:00', close:'04:30' } },
+    { id: 'euronext', name: 'EURONEXT PARIS',     region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
+    { id: 'xetra',    name: 'XETRA FRANCFORT',    region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
+    { id: 'mib',      name: 'MIB MILAN',          region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
+    { id: 'ibex',     name: 'IBEX MADRID',        region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
+    { id: 'smi',      name: 'SMI ZURICH',         region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
+    { id: 'omx',      name: 'OMX STOCKHOLM',      region: 'europe',   hiver: { open:'23:00', close:'06:30' }, ete: { open:'22:00', close:'05:30' } },
+    { id: 'moex',     name: 'MOEX MOSCOU',        region: 'europe',   hiver: { open:'21:00', close:'05:00' }, ete: { open:'20:00', close:'04:00' } },
 
-    function update() {
-        const now = new Date();
-        const curMin = now.getHours() * 60 + now.getMinutes();
-        document.getElementById('clock').innerText = now.toLocaleTimeString('fr-FR');
-        document.getElementById('date').innerText = now.toLocaleDateString('fr-FR', {weekday: 'short', day: 'numeric', month: 'short'});
+    // ── ASIE-PACIFIQUE ────────────────────────────────────────────
+    { id: 'asx',      name: 'ASX SYDNEY',         region: 'asia',     hiver: { open:'13:00', close:'19:00' }, ete: { open:'14:00', close:'20:00' } },
+    { id: 'nzx',      name: 'NZX WELLINGTON',     region: 'asia',     both: { open:'11:00', close:'17:30' } },
+    { id: 'tse',      name: 'TSE TOKYO',          region: 'asia',     both: { open:'00:00', close:'06:30' } },
+    { id: 'ose',      name: 'OSE OSAKA',          region: 'asia',     both: { open:'00:00', close:'06:30' } },
+    { id: 'hkex',     name: 'HKEX HONG KONG',     region: 'asia',     both: { open:'01:30', close:'08:00' } },
+    { id: 'sse',      name: 'SSE SHANGHAI',       region: 'asia',     both: { open:'01:30', close:'07:00' } },
+    { id: 'szse',     name: 'SZSE SHENZHEN',      region: 'asia',     both: { open:'01:30', close:'07:00' } },
+    { id: 'krx',      name: 'KRX SÉOUL',          region: 'asia',     both: { open:'00:00', close:'06:30' } },
+    { id: 'twse',     name: 'TWSE TAIPEI',        region: 'asia',     both: { open:'01:00', close:'06:30' } },
+    { id: 'bse',      name: 'BSE MUMBAI',         region: 'asia',     hiver: { open:'04:15', close:'10:30' }, ete: { open:'03:15', close:'09:30' } },
+    { id: 'sgx',      name: 'SGX SINGAPOUR',      region: 'asia',     both: { open:'01:00', close:'09:00' } },
+    { id: 'idx',      name: 'IDX JAKARTA',        region: 'asia',     both: { open:'01:30', close:'08:00' } },
+    { id: 'bursa',    name: 'BURSA MALAYSIA',     region: 'asia',     both: { open:'01:00', close:'07:30' } },
+    { id: 'set',      name: 'SET BANGKOK',        region: 'asia',     both: { open:'01:30', close:'09:00' } },
 
-        const currentMarkets = [...config[currentSeason].markets, ...config.fixe];
-        let marketHtml = '';
-        currentMarkets.forEach(m => {
-            const start = timeToMin(m.open);
-            const end = timeToMin(m.close);
-            let isOpen = (start < end) ? (curMin >= start && curMin < end) : (curMin >= start || curMin < end);
-            marketHtml += `<tr><td><b>${m.name}</b></td><td>${m.open}-${m.close}</td><td style="text-align: right;"><span class="status-badge ${isOpen ? 'open' : 'closed'}">${isOpen ? 'OUVERT' : 'FERMÉ'}</span></td></tr>`;
-        });
-        document.getElementById('market-list').innerHTML = marketHtml;
+    // ── MOYEN-ORIENT / AFRIQUE ────────────────────────────────────
+    { id: 'tadawul',  name: 'TADAWUL RIYAD',      region: 'mideast',  both: { open:'07:00', close:'11:30' } },
+    { id: 'dfm',      name: 'DFM DUBAI',          region: 'mideast',  both: { open:'06:30', close:'11:30' } },
+    { id: 'adx',      name: 'ADX ABU DHABI',      region: 'mideast',  both: { open:'06:30', close:'11:30' } },
+    { id: 'tase',     name: 'TASE TEL AVIV',      region: 'mideast',  hiver: { open:'22:00', close:'03:30' }, ete: { open:'21:00', close:'02:30' } },
+    { id: 'jse',      name: 'JSE JOHANNESBURG',   region: 'mideast',  hiver: { open:'23:30', close:'06:00' }, ete: { open:'22:30', close:'05:00' } },
+    { id: 'ase',      name: 'EGX LE CAIRE',       region: 'mideast',  both: { open:'06:00', close:'10:30' } },
+];
 
-        let algoHtml = '';
-        config[currentSeason].algos.forEach(a => {
-            const aMin = timeToMin(a.time);
-            const isActive = curMin >= aMin && curMin < (aMin + 15);
-            algoHtml += `<div class="algo-card ${isActive ? 'algo-active' : ''}"><div class="algo-time">${a.time} ${isActive ? '⚡' : ''}</div><div class="algo-title">${a.label}</div></div>`;
-        });
-        document.getElementById('algo-list').innerHTML = algoHtml;
-    }
+const OVERLAPS = [
+    { label: 'Asie → Europe', hiver: {open:'22:00', close:'01:00'}, ete: {open:'21:00', close:'00:00'}, color: '#9b59b6', desc: 'Tokyo + London Pre-market' },
+    { label: 'Europe → NY', hiver: {open:'14:30', close:'18:00'}, ete: {open:'13:30', close:'17:00'}, color: '#3498db', desc: 'Session la plus volatile — haute liquidité EUR/USD' },
+    { label: 'London Fix', hiver: {open:'02:00', close:'02:05'}, ete: {open:'01:00', close:'01:05'}, color: '#f0b90b', desc: 'Fixing WM/Reuters — pic de volume FX' },
+    { label: 'NY Midday', hiver: {open:'18:00', close:'19:30'}, ete: {open:'17:00', close:'18:30'}, color: '#02c076', desc: 'Consolidation + retournements' },
+    { label: 'NY → Asie', hiver: {open:'22:30', close:'00:30'}, ete: {open:'21:30', close:'23:30'}, color: '#e67e22', desc: 'Transition low-liquidity, breakouts possibles' },
+];
 
-    setInterval(update, 1000);
+const ALGOS = {
+    hiver: [
+        { time: "20:30", label: "Algos Europe Pre-mkt" },
+        { time: "22:00", label: "Open Europe" },
+        { time: "02:00", label: "London Fix" },
+        { time: "04:30", label: "Open Wall Street" },
+        { time: "09:00", label: "NY Options Re-fix" },
+        { time: "11:00", label: "MOC Algos" }
+    ],
+    ete: [
+        { time: "19:30", label: "Algos Europe Pre-mkt" },
+        { time: "21:00", label: "Open Europe" },
+        { time: "01:00", label: "London Fix" },
+        { time: "03:30", label: "Open Wall Street" },
+        { time: "08:00", label: "NY Options Re-fix" },
+        { time: "10:00", label: "MOC Algos" }
+    ]
+};
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let currentSeason = localStorage.getItem('tahiti_season') || 'hiver';
+let currentRegion = 'all';
+
+function setSeason(s) {
+    currentSeason = s;
+    localStorage.setItem('tahiti_season', s);
+    document.getElementById('btn-hiver').classList.toggle('active', s === 'hiver');
+    document.getElementById('btn-ete').classList.toggle('active',  s === 'ete');
+    buildHeatmap();
     update();
+}
+
+function setRegion(r) {
+    currentRegion = r;
+    document.querySelectorAll('.region-tab').forEach((el, i) => {
+        el.classList.toggle('active', el.getAttribute('onclick') === `setRegion('${r}')`);
+    });
+    update();
+}
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function timeToMin(t) {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + (m || 0);
+}
+function minToStr(min) {
+    const h = Math.floor(((min % 1440) + 1440) % 1440 / 60);
+    const m = ((min % 1440) + 1440) % 1440 % 60;
+    return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+}
+function isOpen(openStr, closeStr, curMin) {
+    const start = timeToMin(openStr), end = timeToMin(closeStr);
+    return start < end ? (curMin >= start && curMin < end) : (curMin >= start || curMin < end);
+}
+function mktTimes(mkt) {
+    return mkt.both ? mkt.both : mkt[currentSeason];
+}
+function progress(openStr, closeStr, curMin) {
+    const s = timeToMin(openStr), e = timeToMin(closeStr);
+    let duration = (e > s) ? (e - s) : (1440 - s + e);
+    let elapsed = 0;
+    if (e > s) {
+        if (curMin >= s && curMin < e) elapsed = curMin - s;
+    } else {
+        if (curMin >= s) elapsed = curMin - s;
+        else if (curMin < e) elapsed = (1440 - s) + curMin;
+    }
+    return Math.min(100, Math.round(elapsed / duration * 100));
+}
+function minutesUntil(openStr, curMin) {
+    const target = timeToMin(openStr);
+    let diff = target - curMin;
+    if (diff <= 0) diff += 1440;
+    return diff;
+}
+function formatCountdown(min) {
+    const h = Math.floor(min / 60), m = min % 60;
+    return h > 0 ? `${h}h${String(m).padStart(2,'0')}` : `${m}min`;
+}
+
+// ─── HEATMAP BUILD (once on season change) ──────────────────────────────────
+function buildHeatmap() {
+    const HOURS = Array.from({length: 24}, (_, i) => i);
+    // major markets for heatmap
+    const hmMarkets = ALL_MARKETS.filter(m => ['nq_es','lse','tse','hkex','asx','nyse','bse','sgx'].includes(m.id));
+
+    let html = '<thead><tr><th class="mkt-label"></th>';
+    for (let h = 0; h < 24; h++) html += `<th colspan="2">${String(h).padStart(2,'0')}h</th>`;
+    html += '</tr></thead><tbody>';
+
+    // overlap row (count)
+    // For each 30-min slot, count how many of ALL markets are open
+    const slots = 48; // 30min slots in 24h
+    const counts = new Array(slots).fill(0);
+    ALL_MARKETS.forEach(m => {
+        const t = mktTimes(m);
+        for (let s = 0; s < slots; s++) {
+            const mid = s * 30 + 15;
+            if (isOpen(t.open, t.close, mid)) counts[s]++;
+        }
+    });
+
+    // Overlap summary row
+    html += '<tr><td class="mkt-label" style="color:var(--yellow);font-weight:bold;">Liquidité</td>';
+    for (let s = 0; s < slots; s++) {
+        const c = counts[s];
+        const cls = c === 0 ? 'heat-0' : c <= 3 ? 'heat-1' : c <= 8 ? 'heat-2' : c <= 15 ? 'heat-3' : 'heat-4';
+        html += `<td class="${cls}" data-slot="${s}">${c > 0 ? c : ''}</td>`;
+    }
+    html += '</tr>';
+
+    // Per-market rows
+    hmMarkets.forEach(mkt => {
+        const t = mktTimes(mkt);
+        const dot = `<span class="region-dot" style="background:${REGION_COLORS[mkt.region]}"></span>`;
+        html += `<tr><td class="mkt-label">${dot}${mkt.name.split(' ')[0]}</td>`;
+        for (let s = 0; s < slots; s++) {
+            const mid = s * 30 + 15;
+            const open = isOpen(t.open, t.close, mid);
+            html += `<td class="${open ? 'heat-3' : 'heat-0'}" data-slot="${s}"></td>`;
+        }
+        html += '</tr>';
+    });
+
+    html += '</tbody>';
+    document.getElementById('heatmap').innerHTML = html;
+    updateHeatmapNow();
+}
+
+function updateHeatmapNow() {
+    const now = new Date();
+    const curSlot = Math.floor((now.getHours() * 60 + now.getMinutes()) / 30);
+    document.querySelectorAll('.heatmap-table td[data-slot]').forEach(td => {
+        td.classList.toggle('hour-now', parseInt(td.dataset.slot) === curSlot);
+    });
+}
+
+// ─── MAIN UPDATE ────────────────────────────────────────────────────────────
+function update() {
+    const now = new Date();
+    const curMin = now.getHours() * 60 + now.getMinutes();
+    document.getElementById('clock').innerText = now.toLocaleTimeString('fr-FR');
+    document.getElementById('date').innerText = now.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'short', year:'numeric' });
+
+    // MARKETS
+    const filtered = currentRegion === 'all' ? ALL_MARKETS : ALL_MARKETS.filter(m => m.region === currentRegion);
+    let html = '';
+    filtered.forEach(mkt => {
+        const t = mktTimes(mkt);
+        const open = isOpen(t.open, t.close, curMin);
+        const pct = open ? progress(t.open, t.close, curMin) : 0;
+        const color = REGION_COLORS[mkt.region];
+        const dot = `<span class="region-dot" style="background:${color}"></span>`;
+        const countdown = !open ? `<div class="countdown">ouverture dans ${formatCountdown(minutesUntil(t.open, curMin))}</div>` : '';
+        html += `<tr class="market-row">
+            <td><b>${dot}${mkt.name}</b></td>
+            <td style="font-family:monospace;color:var(--yellow)">${t.open} – ${t.close}</td>
+            <td style="min-width:90px">
+                <div class="progress-wrap">
+                    <div class="progress-bar ${open?'':'closed-bar'}" style="width:${pct}%"></div>
+                </div>
+                <div style="font-size:0.62rem;color:var(--gray);margin-top:2px">${pct}%</div>
+            </td>
+            <td style="text-align:right">
+                <span class="status-badge ${open?'open':'closed'}">${open?'OUVERT':'FERMÉ'}</span>
+                ${countdown}
+            </td>
+        </tr>`;
+    });
+    document.getElementById('market-list').innerHTML = html;
+
+    // OVERLAP CARDS
+    let ocHtml = '';
+    OVERLAPS.forEach(ov => {
+        const t = ov.ete ? (currentSeason === 'hiver' ? ov.hiver : ov.ete) : ov.both;
+        const live = isOpen(t.open, t.close, curMin);
+        ocHtml += `<div class="overlap-card ${live?'live':''}">
+            <div class="overlap-title" style="color:${ov.color}">${live ? '🔴 ' : ''}${ov.label}</div>
+            <div class="overlap-time">${t.open} – ${t.close}</div>
+            <div class="overlap-desc">${ov.desc}</div>
+        </div>`;
+    });
+    document.getElementById('overlap-cards').innerHTML = ocHtml;
+
+    // ALGOS
+    let algoHtml = '';
+    ALGOS[currentSeason].forEach(a => {
+        const aMin = timeToMin(a.time);
+        const isActive = curMin >= aMin && curMin < (aMin + 15);
+        algoHtml += `<div class="algo-card ${isActive ? 'algo-active' : ''}">
+            <div class="algo-time">${a.time} ${isActive ? '⚡' : ''}</div>
+            <div class="algo-title">${a.label}</div>
+        </div>`;
+    });
+    document.getElementById('algo-list').innerHTML = algoHtml;
+
+    updateHeatmapNow();
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+setSeason(currentSeason);
+buildHeatmap();
+setInterval(update, 1000);
 </script>
 </body>
 </html>
